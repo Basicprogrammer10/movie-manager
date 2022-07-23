@@ -1,4 +1,5 @@
 use std::fs;
+use std::process::Command;
 
 use crossterm::event::{self, Event, KeyCode};
 use tui::{
@@ -12,7 +13,7 @@ use tui::{
 
 use crate::{
     shows::{new_show::NewShow, ShowInterface},
-    VERSION,
+    util, VERSION,
 };
 
 #[derive(PartialEq, Eq)]
@@ -49,6 +50,19 @@ impl App {
             if let Event::Key(key) = event::read().unwrap() {
                 match key.code {
                     KeyCode::Char('q') => return,
+                    KeyCode::Char('w') => {
+                        if let Some(file) =
+                            util::find_movie_file(self.shows[self.select_index].path())
+                        {
+                            Command::new("mpv")
+                                .args([
+                                    "--ontop",
+                                    &file.canonicalize().unwrap().to_string_lossy().to_string(),
+                                ])
+                                .spawn()
+                                .unwrap();
+                        }
+                    }
                     _ => {}
                 }
 

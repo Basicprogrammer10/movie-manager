@@ -17,4 +17,8 @@ impl ShowInterface for NewShow {
     fn name(&self) -> String {
         format!("*{}", self.name)
     }
+
+    fn path(&self) -> PathBuf {
+        self.path.clone()
+    }
 }

@@ -8,6 +8,7 @@ use tui::{backend::CrosstermBackend, Terminal};
 
 mod app;
 mod shows;
+mod util;
 
 pub const VERSION: &str = "α1.0";
 

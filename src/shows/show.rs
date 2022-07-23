@@ -1,5 +1,5 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use super::ShowInterface;
 
@@ -11,6 +11,7 @@ pub struct Show {
     pub release_year: u16,
     pub rateing: f32,
     pub watched: bool,
+    pub path: PathBuf,
     pub episodes: Vec<Show>,
 }
 
@@ -65,5 +66,9 @@ impl Show {
 impl ShowInterface for Show {
     fn name(&self) -> String {
         format!("{}", self.name)
+    }
+
+    fn path(&self) -> PathBuf {
+        self.path.clone()
     }
 }
