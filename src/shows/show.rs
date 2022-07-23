@@ -1,8 +1,10 @@
 use std::fs;
 use std::path::Path;
 
+use super::ShowInterface;
+
 const TITLE_CHARS: &[char] = &['\''];
-const MOVIE_FORMATS: &[&str] = &["mp4", ];
+const MOVIE_FORMATS: &[&str] = &["mp4"];
 
 pub struct Show {
     pub name: String,
@@ -57,5 +59,11 @@ impl Show {
         }
 
         tokens.join(" ")
+    }
+}
+
+impl ShowInterface for Show {
+    fn name(&self) -> String {
+        format!("{}", self.name)
     }
 }
