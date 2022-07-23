@@ -1,3 +1,14 @@
+//! ```cargo
+//! [dependencies]
+//! bincode = "1.3.3"
+//! pbr = "1.0.4"
+//! serde = { version = "1.0.140", features = ["derive"] }
+//!
+//! [profile.release]
+//! lto = "fat"
+//! codegen-units = 1
+//! ```
+
 use std::collections::HashMap;
 use std::fs;
 
@@ -15,7 +26,7 @@ struct Show {
 fn main() {
     // Load all names and imdb ids
     let mut processing = Vec::new();
-    let akas = fs::read_to_string("./akas.tsv").unwrap();
+    let akas = fs::read_to_string("./data/akas.tsv").unwrap();
     let akas = akas
         .lines()
         .skip(1)
@@ -43,7 +54,7 @@ fn main() {
     processing.dedup_by(|a, b| a.name == b.name);
 
     // Add startYear if avalable
-    let basic = fs::read_to_string("./basics.tsv").unwrap();
+    let basic = fs::read_to_string("./data/basics.tsv").unwrap();
     let basic = basic
         .lines()
         .skip(1)
@@ -70,7 +81,7 @@ fn main() {
     pb.finish_println("[LOADING BASIC] done");
 
     // Add rateing if avalable
-    let ratings = fs::read_to_string("./ratings.tsv").unwrap();
+    let ratings = fs::read_to_string("./data/ratings.tsv").unwrap();
     let ratings = ratings
         .lines()
         .skip(1)
