@@ -7,7 +7,6 @@ const MOVIE_FORMATS: &[&str] = &["mp4", ];
 pub struct Show {
     pub name: String,
     pub release_year: u16,
-    pub description: String,
     pub rateing: f32,
     pub watched: bool,
     pub episodes: Vec<Show>,

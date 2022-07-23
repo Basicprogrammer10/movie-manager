@@ -21,6 +21,7 @@ struct Show {
     pub name: String,
     pub release_date: Option<u16>,
     pub rateing: Option<f32>,
+    pub rateings: u32,
 }
 
 fn main() {
@@ -34,7 +35,6 @@ fn main() {
         .collect::<Vec<_>>();
 
     let mut pb = ProgressBar::new(akas.len() as u64);
-    pb.format("[=> ]");
     pb.message("[LOADING AKAS]    ");
 
     for i in akas {
@@ -47,11 +47,12 @@ fn main() {
             name,
             release_date: None,
             rateing: None,
+            rateings: 0,
         })
     }
-    pb.finish_println("[LOADING AKAS] done");
 
-    processing.dedup_by(|a, b| a.name == b.name);
+    processing.sort_by(|a, b| a.id.cmp(&b.id));
+    processing.dedup_by(|a, b| a.id == b.id);
 
     // Add startYear if avalable
     let basic = fs::read_to_string("./data/basics.tsv").unwrap();
@@ -78,7 +79,6 @@ fn main() {
     for i in &mut processing {
         i.release_date = start_year_map.get(&i.id).copied();
     }
-    pb.finish_println("[LOADING BASIC] done");
 
     // Add rateing if avalable
     let ratings = fs::read_to_string("./data/ratings.tsv").unwrap();
@@ -99,16 +99,24 @@ fn main() {
             Some(i) => i.parse().unwrap(),
             None => continue,
         };
-        rating_map.insert(id, avg_ratings);
+        let num_ratings = match parts.next() {
+            Some(i) => i.parse().unwrap(),
+            None => continue,
+        };
+        rating_map.insert(id, (avg_ratings, num_ratings));
     }
 
     for i in &mut processing {
-        i.rateing = rating_map.get(&i.id).copied();
+        let j = rating_map.get(&i.id).copied();
+        i.rateing = j.map(|x| x.0);
+        i.rateings = match j {
+            Some(k) => k.1,
+            None => 0,
+        };
     }
-    pb.finish_println("[LOADING RATINGS] done");
 
     // Export data to binary format
-    println!("[*] Exporting");
+    println!("\n[*] Exporting");
     fs::write("show_data.bin", bincode::serialize(&processing).unwrap()).unwrap();
     println!("[*] Done!");
 }
